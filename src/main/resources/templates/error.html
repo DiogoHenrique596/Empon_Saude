@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Error</title>
+    <style>
+        h1, h2, h3, p, li, th, td {
+            font-family : sans-serif;
+        }
+        html, body {
+            min-height: 100%;
+            width: 100%;
+            padding: 0px;
+            margin : 0px;
+            border : 0px;
+        }
+        body > div {
+            height : 100%;
+        }
+
+        h1 {
+            margin-top : 0px;
+            margin-bottom : 15px;
+            padding : 10px;
+            background-color: rgb(156, 7, 7);
+            color: white;
+        }
+
+        .stacktrace {
+            padding : 15px;
+            border-radius: 5px;
+            border : 1px solid rgb(205, 205, 205);
+            background-color: rgb(223, 223, 223);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin : 0px auto;
+            width : 80%;
+        }
+    </style>
+</head>
+<body>
+    <div th:if="${status == 401}">
+        <h1>Autenticação necessária</h1>
+        <div class="container" id="information">
+            <h2>Redirecionando para o sistema de autenticação....</h2>
+            <p>Clique <a href="/saml/login">aqui</a> para ser redirecionado.</p>
+        </div>
+        <script>
+            (function(){
+                const TRIES_KEY = "saml.login.tries.key.and.when";
+                const minutes = 5;
+                const minutesInMs = minutes * 60 * 1000;
+                function newTryData(){
+                    return { tries : 0, when : new Date() };
+                }
+
+                var last = localStorage.getItem(TRIES_KEY);
+
+                if(!last){
+                    last = newTryData();
+                }
+                else if(typeof last == "string"){
+                    try{
+                        last = JSON.parse(last);
+                        last.when = new Date(last.when);
+                    }
+                    catch(err){
+                        console.err(err);
+                        last = newTryData();
+                    }
+                }
+                else {
+                    last = newTryData();
+                }
+
+                if(new Date().getTime() - last.when.getTime() >= minutesInMs){
+                    last = newTryData();
+                }
+
+                console.log(last);
+                last.tries ++;
+                last.when = new Date();
+
+                localStorage.setItem(TRIES_KEY, JSON.stringify(last))
+
+                if(last.tries > 3){
+                    let p = document.createElement("p");
+                    p.innerHTML = "Houve 3 ou mais tentatives para realizar o login. Redirecionamento atuomático foi desabilitado.";
+                    document.getElementById("information").appendChild(p);
+                }
+                else {
+                    window.location.assign('/saml/login');
+                }
+            })();
+        </script>
+    </div>
+    <div th:unless="${status == 401}">
+        <h1>Houve um erro</h1>
+        <div class="container">
+            <p><span th:text="${path}"></span></p>
+            <p><span th:text="${'Details: ' + message}"></span></p>
+            <p><span th:text="${'Status: ' + status}"></span></p>
+            <div class="stacktrace">
+                <pre th:text="${'Status: ' + trace}" />
+            </div>
+        </div>
+    </div>
+</body>
+</html>
