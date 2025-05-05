@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -36,17 +37,17 @@ public class CostCenterController {
     @GetMapping(path = "/entity/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody AdcClientCostCenterEntity getCostCenter(
             @PathVariable(name = "id", required = true) @Parameter(description = "id") Long id,
-            @RequestParam(name = "thirdPartyUserId", required = false) @Parameter(description = "thirdPartyUserId") Long thirdPartyUserId ) {
-        return costCenterService.findById( id );
+            @RequestHeader(name = "clientId", required = true) @Parameter(description = "clientId") Long clientId ) {
+        return costCenterService.findById( id, clientId );
     }
 
     @Operation(summary = "Create cost center by Id", description = "[findById] This method should create a client cost center")
     @PostMapping(path = "/entity", produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody AdcClientCostCenterEntity createCostCenter(
             @RequestBody ClientCostCenterDTO clientCostCenterDTO,
-            @RequestParam(name = "thirdPartyUserId", required = false) @Parameter(description = "thirdPartyUserId") Long thirdPartyUserId ) throws
+            @RequestHeader(name = "clientId", required = false) @Parameter(description = "clientId") Long clientId ) throws
             ValidationException {
-        return costCenterService.save( clientCostCenterDTO );
+        return costCenterService.save( clientCostCenterDTO, clientId );
     }
 
     @Operation(summary = "Update cost center by Id", description = "[findById] This method should update a client cost center")
@@ -54,17 +55,17 @@ public class CostCenterController {
     public @ResponseBody AdcClientCostCenterEntity updateCostCenter(
             @RequestBody ClientCostCenterDTO clientCostCenterDTO,
             @PathVariable(name = "id", required = true) @Parameter(description = "id") Long id,
-            @RequestParam(name = "thirdPartyUserId", required = false) @Parameter(description = "thirdPartyUserId") Long thirdPartyUserId ) throws
+            @RequestHeader(name = "clientId", required = false) @Parameter(description = "clientId") Long clientId ) throws
             ValidationException {
-        return costCenterService.update( clientCostCenterDTO );
+        return costCenterService.update( clientCostCenterDTO, clientId );
     }
 
     @Operation(summary = "Delete cost center by Id", description = "[findById] This method should delete a client cost center")
     @DeleteMapping(path = "/entity/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> deleteCostCenter(
             @PathVariable(name = "id", required = true) @Parameter(description = "id") Long id,
-            @RequestParam(name = "thirdPartyUserId", required = false) @Parameter(description = "thirdPartyUserId") Long thirdPartyUserId ) {
-        costCenterService.deleteById( id );
+            @RequestHeader(name = "clientId", required = false) @Parameter(description = "clientId") Long clientId ) {
+        costCenterService.deleteById( id, clientId );
         return new ResponseEntity<>( HttpStatus.OK );
     }
 
@@ -76,18 +77,16 @@ public class CostCenterController {
             @RequestParam(name = "field", required = false) @Parameter(description = "field") String field,
             @RequestParam(name = "filter", required = false) @Parameter(description = "filter") String filter,
             @RequestParam(name = "pageNumber", required = true) @Parameter(description = "pageNumber") Integer pageNumber,
-            @RequestParam(name = "pageSize", required = true) @Parameter(description = "pageSize") Integer pageSize,
-            @RequestParam(name = "thirdPartyUserId", required = false) @Parameter(description = "thirdPartyUserId") Long thirdPartyUserId ) {
-        return costCenterService.getCostCenterPaginated( clientId, productId, field, filter, pageNumber, pageSize,
-                thirdPartyUserId );
+            @RequestParam(name = "pageSize", required = true) @Parameter(description = "pageSize") Integer pageSize ) {
+        return costCenterService.getCostCenterPaginated( clientId, productId, field, filter, pageNumber, pageSize );
     }
 
     @Operation(summary = "Import cost center by Id", description = "[findById] This method should create a imported client cost center")
     @PostMapping(path = "/import-data", produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody AdcClientCostCenterEntity importCostCenter(
             @RequestBody ClientCostCenterDTO clientCostCenterDTO,
-            @RequestParam(name = "thirdPartyUserId", required = false) @Parameter(description = "thirdPartyUserId") Long thirdPartyUserId ) {
-        return costCenterService.importData( clientCostCenterDTO, thirdPartyUserId );
+            @RequestHeader(name = "clientId", required = false) @Parameter(description = "clientId") Long clientId ) {
+        return costCenterService.importData( clientCostCenterDTO, clientId );
     }
 
     @Operation(
@@ -96,11 +95,10 @@ public class CostCenterController {
     )
     @GetMapping(path = "/import-file-template", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     public ResponseEntity<ByteArrayResource> downloadCostCenterTemplateFile(
-            @RequestParam(name = "clientId", required = true) @Parameter(description = "clientId") Long clientId,
-            @RequestParam(name = "thirdPartyUserId", required = false) @Parameter(description = "thirdPartyUserId") Long thirdPartyUserId ) {
+            @RequestHeader(name = "clientId", required = false) @Parameter(description = "clientId") Long clientId ) {
 
         //TODO definir se vai ficar aqui mesmo
-        byte[] fileContent = costCenterService.getImportTemplateFile( clientId, thirdPartyUserId );
+        byte[] fileContent = costCenterService.getImportTemplateFile( clientId );
         String filename = "cost-center-template.xlsx";
         return ResponseEntity
                 .ok()

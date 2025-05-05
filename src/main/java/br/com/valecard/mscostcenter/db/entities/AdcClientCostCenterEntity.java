@@ -65,4 +65,19 @@ public class AdcClientCostCenterEntity implements java.io.Serializable {
         this.description = description;
     }
 
+
+    @Override
+    public String toString() {
+        return "AdcClientCostCenterEntity{" +
+                "id=" + id +
+                ", branch=" + branch +
+                ", code=" + code +
+                ", description='" + description + '\'' +
+                ", deactivationDate=" + deactivationDate +
+                ", costCenter='" + costCenter + '\'' +
+                ", clientId=" + clientId +
+                ", resultCenterId=" + resultCenterId +
+                ", virtual='" + virtual + '\'' +
+                '}';
+    }
 }

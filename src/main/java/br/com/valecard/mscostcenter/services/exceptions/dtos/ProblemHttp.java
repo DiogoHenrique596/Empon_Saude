@@ -37,4 +37,17 @@ public class ProblemHttp {
 
     private List<ProblemObject> objects;
 
+    @Override
+    public String toString() {
+        return "ProblemHttp{" +
+                "status=" + status +
+                ", type='" + type + '\'' +
+                ", title='" + title + '\'' +
+                ", detail='" + detail + '\'' +
+                ", message='" + message + '\'' +
+                ", instance='" + instance + '\'' +
+                ", timestamp=" + timestamp +
+                ", objects=" + objects +
+                '}';
+    }
 }

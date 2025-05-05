@@ -18,6 +18,7 @@ import static br.com.valecard.mscostcenter.services.exceptions.message.Infrastru
 
 import br.com.valecard.mscostcenter.services.exceptions.BusinessException;
 import br.com.valecard.mscostcenter.services.exceptions.ConflictException;
+import br.com.valecard.mscostcenter.services.exceptions.ResourceNotFoundException;
 import br.com.valecard.mscostcenter.services.exceptions.ValidationException;
 import br.com.valecard.mscostcenter.services.exceptions.dtos.ProblemHttp;
 import br.com.valecard.mscostcenter.services.exceptions.enums.ProblemHttpType;
@@ -77,8 +78,8 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(ValidationException.class)
-    public final ResponseEntity<Object> handleValidationExceptionException( ValidationException validationException,
-                                                                            WebRequest webRequest ) {
+    public final ResponseEntity<Object> handleValidationException( ValidationException validationException,
+                                                                   WebRequest webRequest ) {
 
         ProblemHttp exceptionResponse = new ProblemHttp( HttpStatus.BAD_REQUEST.value(),
                 ProblemHttpType.BAD_REQUEST.getUri(), ProblemHttpType.BAD_REQUEST.getTitle(),
@@ -86,9 +87,26 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                 OffsetDateTime.now(), validationException.getProblemObjectList() );
 
 
-        LOG.error( validationException.getMessage(), validationException );
+        LOG.warn( validationException.getMessage() );
 
         return super.handleExceptionInternal( validationException, exceptionResponse, new HttpHeaders(),
+                HttpStatus.BAD_REQUEST, webRequest );
+    }
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public final ResponseEntity<Object> handleCostCenterNotFoundException(
+            ResourceNotFoundException costCenterNotFoundException,
+            WebRequest webRequest ) {
+
+        ProblemHttp exceptionResponse = new ProblemHttp( HttpStatus.NOT_FOUND.value(),
+                ProblemHttpType.RESOURCE_NOT_FOUND.getUri(), ProblemHttpType.RESOURCE_NOT_FOUND.getTitle(),
+                ProblemHttpType.RESOURCE_NOT_FOUND.getTitle(), costCenterNotFoundException.getMessage(), getUrlRequest( webRequest ),
+                OffsetDateTime.now(), null );
+
+
+        LOG.error( costCenterNotFoundException.getMessage(), costCenterNotFoundException );
+
+        return super.handleExceptionInternal( costCenterNotFoundException, exceptionResponse, new HttpHeaders(),
                 HttpStatus.BAD_REQUEST, webRequest );
     }
 

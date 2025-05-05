@@ -10,6 +10,16 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProblemObject {
+
     private String name;
+
     private String detail;
+
+    @Override
+    public String toString() {
+        return "ProblemObject{" +
+                "name='" + name + '\'' +
+                ", detail='" + detail + '\'' +
+                '}';
+    }
 }

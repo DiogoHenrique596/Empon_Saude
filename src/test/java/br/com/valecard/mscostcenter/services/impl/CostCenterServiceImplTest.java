@@ -46,6 +46,8 @@ class CostCenterServiceImplTest {
     private ClientCostCenterDTO validDto;
     private AdcClientCostCenterEntity validEntity;
 
+    private static Long CLIENT_ID = 1L;
+
     @BeforeEach
     void setUp() {
         validDto = new ClientCostCenterDTO();
@@ -65,7 +67,7 @@ class CostCenterServiceImplTest {
     void findById_existingId_returnsEntity() {
         when( costCenterRepository.findById( 1L ) ).thenReturn( Optional.of( validEntity ) );
 
-        AdcClientCostCenterEntity result = service.findById( 1L );
+        AdcClientCostCenterEntity result = service.findById( 1L, CLIENT_ID );
 
         assertNotNull( result );
         assertEquals( 1L, result.getId() );
@@ -75,7 +77,7 @@ class CostCenterServiceImplTest {
     void save_validDto_returnsSavedEntity() throws ValidationException {
         when( costCenterRepository.save( any() ) ).thenReturn( validEntity );
 
-        AdcClientCostCenterEntity result = service.save( validDto );
+        AdcClientCostCenterEntity result = service.save( validDto, CLIENT_ID );
 
         assertNotNull( result );
         assertEquals( validDto.getDescription(), result.getDescription() );
@@ -87,7 +89,7 @@ class CostCenterServiceImplTest {
         when( costCenterRepository.findById( 1L ) ).thenReturn( Optional.of( validEntity ) );
         when( costCenterRepository.save( any() ) ).thenReturn( validEntity );
 
-        AdcClientCostCenterEntity result = service.update( validDto );
+        AdcClientCostCenterEntity result = service.update( validDto, CLIENT_ID );
 
         assertNotNull( result );
         verify( costCenterRepository ).save( any() );
@@ -97,7 +99,7 @@ class CostCenterServiceImplTest {
     void deleteById_existingId_deletesEntity() {
         when( costCenterRepository.findById( 1L ) ).thenReturn( Optional.of( validEntity ) );
 
-        assertDoesNotThrow( () -> service.deleteById( 1L ) );
+        assertDoesNotThrow( () -> service.deleteById( 1L, CLIENT_ID ) );
         verify( costCenterRepository ).delete( validEntity );
     }
 
@@ -110,7 +112,7 @@ class CostCenterServiceImplTest {
         when( costCenterRepository.findAll( nullable( Specification.class ), eq( pageable ) ) ).thenReturn(
                 page );
 
-        Page<AdcClientCostCenterEntity> result = service.getCostCenterPaginated( 1L, null, "code", "co", 0, 10, null );
+        Page<AdcClientCostCenterEntity> result = service.getCostCenterPaginated( CLIENT_ID, null, "code", "co", 0, 10 );
 
         assertEquals( 1, result.getContent().size() );
         verify( costCenterRepository ).findAll( nullable( Specification.class ), eq( pageable ) );
@@ -121,17 +123,18 @@ class CostCenterServiceImplTest {
         validDto.setBranch( null );
         validDto.setCode( null );
         validDto.setDescription( null );
-        ValidationException exception = assertThrows( ValidationException.class, () -> service.save( validDto ) );
+        ValidationException exception = assertThrows( ValidationException.class,
+                () -> service.save( validDto, CLIENT_ID ) );
         assertTrue( exception.getMessage().equals( EXCEPTION_INVALID_DATA ) );
     }
 
     @Test
     void importData_stub_returnsNull() {
-        assertNull( service.importData( validDto, 123L ) );
+        assertNull( service.importData( validDto, CLIENT_ID ) );
     }
 
     @Test
     void getImportTemplateFile_always_returnsEmptyArray() {
-        assertArrayEquals( new byte[0], service.getImportTemplateFile( 1L, 2L ) );
+        assertArrayEquals( new byte[0], service.getImportTemplateFile( 1L ) );
     }
 }

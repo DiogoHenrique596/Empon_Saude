@@ -20,8 +20,8 @@ public class ClientCostCenterDTO implements java.io.Serializable {
 
     private Integer code;
 
-
     private String description;
+
     private Date deactivationDate;
 
     private String costCenter;
@@ -32,4 +32,18 @@ public class ClientCostCenterDTO implements java.io.Serializable {
 
     private String virtual;
 
+    @Override
+    public String toString() {
+        return "ClientCostCenterDTO{" +
+                "id=" + id +
+                ", branch=" + branch +
+                ", code=" + code +
+                ", description='" + description + '\'' +
+                ", deactivationDate=" + deactivationDate +
+                ", costCenter='" + costCenter + '\'' +
+                ", clientId=" + clientId +
+                ", resultCenterId=" + resultCenterId +
+                ", virtual='" + virtual + '\'' +
+                '}';
+    }
 }
