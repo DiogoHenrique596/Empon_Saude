@@ -19,9 +19,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import br.com.valecard.mscrosscostcenter.db.entities.AdcClientCostCenterEntity;
-import br.com.valecard.mscrosscostcenter.services.CostCenterService;
-import br.com.valecard.mscrosscostcenter.services.dtos.ClientCostCenterDTO;
-import br.com.valecard.mscrosscostcenter.services.exceptions.ValidationException;
+import br.com.valecard.mscrosscostcenter.services.impl.CostCenterService;
+import br.com.valecard.mscrosscostcenter.services.impl.dtos.ClientCostCenterDTO;
+import br.com.valecard.mscrosscostcenter.services.impl.exceptions.ValidationException;
 
 class CostCenterControllerTest {
 

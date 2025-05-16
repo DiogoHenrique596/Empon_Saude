@@ -27,7 +27,7 @@ public class SwaggerResourceConfig {
     @Bean
     public GroupedOpenApi publicApi() {
         return GroupedOpenApi.builder()
-                .group( "mscostcenter" )
+                .group( "mscrosscostcenter" )
                 .packagesToScan( "br.com.valecard.mscrosscostcenter" )
                 .pathsToMatch( "/**" )
                 .build();

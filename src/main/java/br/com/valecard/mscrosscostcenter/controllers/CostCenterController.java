@@ -20,11 +20,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.valecard.mscrosscostcenter.db.entities.AdcClientCostCenterEntity;
-import br.com.valecard.mscrosscostcenter.services.CostCenterService;
-import br.com.valecard.mscrosscostcenter.services.dtos.ClientCostCenterDTO;
-import br.com.valecard.mscrosscostcenter.services.exceptions.ValidationException;
+import br.com.valecard.mscrosscostcenter.services.impl.CostCenterService;
+import br.com.valecard.mscrosscostcenter.services.impl.dtos.ClientCostCenterDTO;
+import br.com.valecard.mscrosscostcenter.services.impl.exceptions.ValidationException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("api/rest/cost-center")
@@ -39,6 +41,23 @@ public class CostCenterController {
             @PathVariable(name = "id", required = true) @Parameter(description = "id") Long id,
             @RequestHeader(name = "clientId", required = true) @Parameter(description = "clientId") Long clientId ) {
         return costCenterService.findById( id, clientId );
+    }
+
+    @Operation(summary = "Validate cost center", description = "[validate] This method should validate a client cost center")
+    @GetMapping(path = "/validate/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody AdcClientCostCenterEntity validateCostCenter(
+            @RequestBody ClientCostCenterDTO clientCostCenterDTO,
+            @RequestHeader(name = "clientId", required = true) @Parameter(description = "clientId") Long clientId ) throws
+            ValidationException {
+        return costCenterService.validate( clientCostCenterDTO, clientId );
+    }
+
+    @Operation(summary = "Create list cost center by Id", description = "[findById] This method should create a client cost center")
+    @PostMapping(path = "/entity", produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<AdcClientCostCenterEntity> listCostCenters(
+            @RequestBody List<ClientCostCenterDTO> clientCostCenterDTOs,
+            @RequestHeader(name = "clientId", required = false) @Parameter(description = "clientId") Long clientId) throws ValidationException {
+        return costCenterService.persistList(clientCostCenterDTOs, clientId);
     }
 
     @Operation(summary = "Create cost center by Id", description = "[findById] This method should create a client cost center")
