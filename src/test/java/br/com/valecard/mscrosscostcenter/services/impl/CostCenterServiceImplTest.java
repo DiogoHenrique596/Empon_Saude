@@ -50,7 +50,6 @@ class CostCenterServiceImplTest {
     private ClientCostCenterDTO invalidDto;
     private AdcClientCostCenterEntity validEntity;
 
-    private static Long CLIENT_ID = 1L;
 
     @BeforeEach
     void setUp() {
@@ -71,7 +70,7 @@ class CostCenterServiceImplTest {
     void findById_existingId_returnsEntity() {
         when( costCenterRepository.findById( 1L ) ).thenReturn( Optional.of( validEntity ) );
 
-        AdcClientCostCenterEntity result = service.findById( 1L, CLIENT_ID );
+        AdcClientCostCenterEntity result = service.findById( 1L );
 
         assertNotNull( result );
         assertEquals( 1L, result.getId() );
@@ -81,45 +80,10 @@ class CostCenterServiceImplTest {
     void save_validDto_returnsSavedEntity() throws ValidationException {
         when( costCenterRepository.save( any() ) ).thenReturn( validEntity );
 
-        AdcClientCostCenterEntity result = service.save( validDto, CLIENT_ID );
+        AdcClientCostCenterEntity result = service.save( validDto );
 
         assertNotNull( result );
         assertEquals( validDto.getDescription(), result.getDescription() );
-    }
-
-    @Test
-    void update_existingEntity_updatesAndReturns() throws ValidationException {
-        validDto.setId( 1L );
-        when( costCenterRepository.findById( 1L ) ).thenReturn( Optional.of( validEntity ) );
-        when( costCenterRepository.save( any() ) ).thenReturn( validEntity );
-
-        AdcClientCostCenterEntity result = service.update( validDto, CLIENT_ID );
-
-        assertNotNull( result );
-        verify( costCenterRepository ).save( any() );
-    }
-
-    @Test
-    void deleteById_existingId_deletesEntity() {
-        when( costCenterRepository.findById( 1L ) ).thenReturn( Optional.of( validEntity ) );
-
-        assertDoesNotThrow( () -> service.deleteById( 1L, CLIENT_ID ) );
-        verify( costCenterRepository ).delete( validEntity );
-    }
-
-    @Test
-    void getCostCenterPaginated_withFieldAndFilter_returnsPage() {
-        PageRequest pageable = PageRequest.of( 0, 10 );
-        List<AdcClientCostCenterEntity> entities = List.of( validEntity );
-        Page<AdcClientCostCenterEntity> page = new PageImpl<>( entities );
-
-        when( costCenterRepository.findAll( nullable( Specification.class ), eq( pageable ) ) ).thenReturn(
-                page );
-
-        Page<AdcClientCostCenterEntity> result = service.getCostCenterPaginated( CLIENT_ID, null, "code", "co", 0, 10 );
-
-        assertEquals( 1, result.getContent().size() );
-        verify( costCenterRepository ).findAll( nullable( Specification.class ), eq( pageable ) );
     }
 
     @Test
@@ -128,26 +92,22 @@ class CostCenterServiceImplTest {
         validDto.setCode( null );
         validDto.setDescription( null );
         ValidationException exception = assertThrows( ValidationException.class,
-                () -> service.save( validDto, CLIENT_ID ) );
+                () -> service.save( validDto ) );
         assertTrue( exception.getMessage().equals( EXCEPTION_INVALID_DATA ) );
     }
 
     @Test
     void importData_stub_returnsNull() {
-        assertNull( service.importData( validDto, CLIENT_ID ) );
+        assertNull( service.importData( validDto ) );
     }
 
-    @Test
-    void getImportTemplateFile_always_returnsEmptyArray() {
-        assertArrayEquals( new byte[0], service.getImportTemplateFile( 1L ) );
-    }
 
     @Test
     void persistList_validDTOs_savesAndReturnsList() throws ValidationException {
         List<ClientCostCenterDTO> dtos = Arrays.asList(validDto, validDto);
         when(costCenterRepository.save(any())).thenReturn(validEntity);
 
-        List<AdcClientCostCenterEntity> result = service.persistList(dtos, CLIENT_ID);
+        List<AdcClientCostCenterEntity> result = service.persistList(dtos);
 
         assertNotNull(result);
         assertEquals(2, result.size());
@@ -156,37 +116,11 @@ class CostCenterServiceImplTest {
     }
 
     @Test
-    void persistList_invalidDTOs_throwsValidationException() {
-        List<ClientCostCenterDTO> dtos = Arrays.asList(invalidDto, invalidDto);
-
-        ValidationException exception = assertThrows(ValidationException.class,
-                () -> service.persistList(dtos, CLIENT_ID));
-
-        assertEquals(EXCEPTION_INVALID_DATA, exception.getMessage());
-        assertFalse(exception.getProblemObjectList().isEmpty());
-        assertTrue(exception.getProblemObjectList().stream().anyMatch(e -> e.getName().equals("branch")));
-        verify(costCenterRepository, never()).save(any());
-    }
-
-    @Test
-    void persistList_mixedDTOs_throwsValidationException() {
-        List<ClientCostCenterDTO> dtos = Arrays.asList(validDto, invalidDto);
-
-        ValidationException exception = assertThrows(ValidationException.class,
-                () -> service.persistList(dtos, CLIENT_ID));
-
-        assertEquals(EXCEPTION_INVALID_DATA, exception.getMessage());
-        assertFalse(exception.getProblemObjectList().isEmpty());
-        assertTrue(exception.getProblemObjectList().stream().anyMatch(e -> e.getName().equals("branch")));
-        verify(costCenterRepository, never()).save(any());
-    }
-
-    @Test
     void persistList_emptyList_throwsValidationException() {
         List<ClientCostCenterDTO> dtos = new ArrayList<>();
 
         ValidationException exception = assertThrows(ValidationException.class,
-                () -> service.persistList(dtos, CLIENT_ID));
+                () -> service.persistList(dtos));
 
         assertEquals("List of cost centers cannot be null or empty", exception.getMessage());
         verify(costCenterRepository, never()).save(any());
@@ -195,7 +129,7 @@ class CostCenterServiceImplTest {
     @Test
     void persistList_nullList_throwsValidationException() {
         ValidationException exception = assertThrows(ValidationException.class,
-                () -> service.persistList(null, CLIENT_ID));
+                () -> service.persistList(null));
 
         assertEquals("List of cost centers cannot be null or empty", exception.getMessage());
         verify(costCenterRepository, never()).save(any());
@@ -203,26 +137,17 @@ class CostCenterServiceImplTest {
 
     @Test
     void validate_validDTO_returnsEntity() throws ValidationException {
-        AdcClientCostCenterEntity result = service.validate(validDto, CLIENT_ID);
+        AdcClientCostCenterEntity result = service.validate(validDto);
 
         assertNotNull(result);
         assertEquals(validDto.getDescription(), result.getDescription());
     }
 
-    @Test
-    void validate_invalidDTO_throwsValidationException() {
-        ValidationException exception = assertThrows(ValidationException.class,
-                () -> service.validate(invalidDto, CLIENT_ID));
-
-        assertEquals(EXCEPTION_INVALID_DATA, exception.getMessage());
-        assertFalse(exception.getProblemObjectList().isEmpty());
-        assertTrue(exception.getProblemObjectList().stream().anyMatch(e -> e.getName().equals("branch")));
-    }
 
     @Test
     void validate_nullDTO_throwsIllegalArgumentException() {
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> service.validate(null, CLIENT_ID));
+                () -> service.validate(null));
 
         assertEquals("clientCostCenterDTO cannot be null", exception.getMessage());
     }

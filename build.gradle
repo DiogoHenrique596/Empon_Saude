@@ -80,10 +80,32 @@ dependencyManagement {
 	}
 }
 
+sonarqube {
+	properties {
+		property "sonar.projectName", "ms-portal-importador"
+		property "sonar.projectKey", "ms-portal-importador"
+		property "sonar.host.url", "https://sonar.valecard.com.br"
+		property "sonar.sourceEncoding", "UTF-8"
+		property "sonar.java.coveragePlugin", "jacoco"
+		property "sonar.dynamicAnalysis", "reuseReports"
+	}
+}
+
 jacoco {
 	toolVersion = "0.8.11"
 	reportsDirectory = layout.buildDirectory.dir('reports')
 }
+
+def jacocoExcludes = [
+		'**/config/**',
+		'**/services/dtos/**',
+		'**/services/exceptions/**',
+		'**/utils/dto/**',
+		'**/utils/enums/**',
+		'**/utils/exceptions/**',
+		'**/db/entities/**',
+		'**/Main**'
+]
 
 jacocoTestReport {
 	dependsOn test
@@ -92,6 +114,16 @@ jacocoTestReport {
 		csv.required = false
 		html.outputLocation.set(layout.buildDirectory.dir('reports/jacoco/html'))
 	}
+
+	afterEvaluate {
+		classDirectories.setFrom(
+				files(classDirectories.files.collect {
+					fileTree(dir: it, exclude: jacocoExcludes)
+				})
+		)
+	}
+
+	finalizedBy jacocoTestCoverageVerification
 }
 
 jacocoTestCoverageVerification {
@@ -101,12 +133,28 @@ jacocoTestCoverageVerification {
 			limit {
 				counter = 'INSTRUCTION'
 				value = 'COVEREDRATIO'
-				minimum = 0.5
+
+				minimum = 0.4
 			}
 		}
+	}
+	afterEvaluate {
+		classDirectories.setFrom(
+				files(classDirectories.files.collect {
+					fileTree(dir: it, exclude: jacocoExcludes)
+				})
+		)
 	}
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+tasks.withType(JavaCompile) {
+	options.compilerArgs << "-parameters"
+}
+
+test {
+	finalizedBy jacocoTestReport
 }

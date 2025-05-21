@@ -1,5 +1,6 @@
 package br.com.valecard.mscrosscostcenter.db.entities;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -45,17 +46,32 @@ public class AdcClientCostCenterEntity implements java.io.Serializable {
     @Column(name = "DATA_DESATIVACAO", length = 7)
     private Date deactivationDate;
 
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "DATA_MIGRACAO_TX", length = 7)
+    private Date migrationDate;
+
     @Column(name = "CENTRO_CUSTO", length = 20)
     private String costCenter;
 
     @Column(name = "CLIENTE_ID", precision = 10, scale = 0)
     private Long clientId;
 
+    @Column(name = "SUBJECT_ID", precision = 10, scale = 0)
+    private Long subjectId;
+
     @Column(name = "CENTRO_RESULTADO_ID", precision = 10, scale = 0)
     private Long resultCenterId;
 
     @Column(name = "VIRTUAL", length = 1)
     private String virtual;
+
+    @Column(name = "LIMITE_CREDITO", precision = 16, scale = 2)
+    private BigDecimal creditLimit;
+
+    @Column(name = "SALDO_DISPONIVEL", precision = 16, scale = 2)
+    private BigDecimal availableBalance;
+
+
 
 
     public AdcClientCostCenterEntity( Long id, Integer branch, Integer code, String description ) {

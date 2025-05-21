@@ -34,12 +34,11 @@ public class CostCenterServiceImpl implements CostCenterService {
     private CostCenterRepository costCenterRepository;
 
     @Override
-    public AdcClientCostCenterEntity findById( Long id, Long clientId ) {
+    public AdcClientCostCenterEntity findById( Long id ) {
 
         Assert.notNull( id, "id cannot be null" );
-        Assert.notNull( clientId, "clientId cannot be null" );
 
-        log.info( "Starting method findById with parameters - id: {}, clientId: {}", id, clientId );
+        log.info( "Starting method findById with parameters - id: {}, clientId: {}", id );
         AdcClientCostCenterEntity adcClientCostCenter = costCenterRepository.findById( id ).orElseThrow(
                 ResourceNotFoundException::new );
         log.info( "Finishing method findById with id: {}", id );
@@ -47,10 +46,10 @@ public class CostCenterServiceImpl implements CostCenterService {
     }
 
     @Override
-    public AdcClientCostCenterEntity validate(ClientCostCenterDTO clientCostCenterDTO, Long clientId) throws ValidationException {
+    public AdcClientCostCenterEntity validate(ClientCostCenterDTO clientCostCenterDTO) throws ValidationException {
         Assert.notNull(clientCostCenterDTO, "clientCostCenterDTO cannot be null");
 
-        log.info("Starting method validate. clientId: {}, costCenterDTO: {}", clientId, clientCostCenterDTO);
+        log.info("Starting method validate. costCenterDTO: {}",  clientCostCenterDTO);
 
         List<ProblemObject> validationErrors = validateClientCostCenterDTO(clientCostCenterDTO);
         if (!validationErrors.isEmpty()) {
@@ -64,14 +63,14 @@ public class CostCenterServiceImpl implements CostCenterService {
 
         log.debug("Mapping ClientCostCenterDTO to AdcClientCostCenterEntity. DTO: {}", clientCostCenterDTO);
         AdcClientCostCenterEntity entity = ClientCostCenterMapper.toEntity(clientCostCenterDTO);
-        entity.setClientId(clientId);
+        entity.setClientId(clientCostCenterDTO.getClientId());
 
         log.info("Successfully validated entity. Entity ID: {}", entity.getId());
         return entity;
     }
 
     @Override
-    public List<AdcClientCostCenterEntity> persistList(List<ClientCostCenterDTO> listClientCostCenterDTO, Long clientId) throws ValidationException {
+    public List<AdcClientCostCenterEntity> persistList(List<ClientCostCenterDTO> listClientCostCenterDTO) throws ValidationException {
         if (listClientCostCenterDTO == null || listClientCostCenterDTO.isEmpty()) {
             throw new ValidationException("List of cost centers cannot be null or empty");
         }
@@ -81,7 +80,7 @@ public class CostCenterServiceImpl implements CostCenterService {
 
         for (ClientCostCenterDTO clientCostCenterDTO : listClientCostCenterDTO) {
             Assert.notNull(clientCostCenterDTO, "clientCostCenterDTO cannot be null");
-            log.info("Starting method save. clientId: {}, costCenterDTO: {}", clientId, clientCostCenterDTO);
+            log.info("Starting method save.  costCenterDTO: {}",  clientCostCenterDTO);
 
             List<ProblemObject> validationErrors = validateClientCostCenterDTO(clientCostCenterDTO);
             if (!validationErrors.isEmpty()) {
@@ -89,7 +88,7 @@ public class CostCenterServiceImpl implements CostCenterService {
             } else {
                 log.debug("Mapping ClientCostCenterDTO to AdcClientCostCenterEntity. DTO: {}", clientCostCenterDTO);
                 AdcClientCostCenterEntity entity = ClientCostCenterMapper.toEntity(clientCostCenterDTO);
-                entity.setClientId(clientId);
+                entity.setClientId(clientCostCenterDTO.getClientId());
 
                 log.debug("Saving entity to repository. Entity: {}", entity);
                 entity = costCenterRepository.save(entity);
@@ -113,12 +112,12 @@ public class CostCenterServiceImpl implements CostCenterService {
     }
 
     @Override
-    public AdcClientCostCenterEntity save( ClientCostCenterDTO clientCostCenterDTO, Long clientId ) throws
+    public AdcClientCostCenterEntity save( ClientCostCenterDTO clientCostCenterDTO ) throws
             ValidationException {
         Assert.notNull( clientCostCenterDTO, "clientCostCenterDTO cannot be null" );
 
-        log.info( "Starting method save. clientId: {}, costCenterDTO: {}",
-                clientId, clientCostCenterDTO );
+        log.info( "Starting method save.  costCenterDTO: {}",
+                 clientCostCenterDTO );
 
         validateClientCostCenterDTO( clientCostCenterDTO );
 
@@ -132,92 +131,9 @@ public class CostCenterServiceImpl implements CostCenterService {
         return entity;
     }
 
-    @Override
-    public AdcClientCostCenterEntity update( ClientCostCenterDTO clientCostCenterDTO, Long clientId ) throws
-            ValidationException {
-        log.info( "Starting method update for clientCostCenterDTO: {}", clientCostCenterDTO );
-
-        Assert.notNull( clientCostCenterDTO, "clientCostCenterDTO cannot be null" );
-        Assert.notNull( clientCostCenterDTO.getId(), "id cannot be null" );
-
-        log.debug( "Fetching entity with ID: {}", clientCostCenterDTO.getId() );
-        AdcClientCostCenterEntity entity = costCenterRepository.findById( clientCostCenterDTO.getId() ).orElseThrow(
-                () -> new ResourceNotFoundException() );
-
-        validateClientCostCenterDTO( clientCostCenterDTO );
-
-        log.debug( "Updating fields for entity with ID: {}", clientCostCenterDTO.getId() );
-
-        entity = ClientCostCenterMapper.toEntity( clientCostCenterDTO );
-
-        log.debug( "Saving updated entity with ID: {}", clientCostCenterDTO.getId() );
-        AdcClientCostCenterEntity updatedEntity = costCenterRepository.save( entity );
-
-        log.info( "Successfully updated entity with ID: {}", updatedEntity.getId() );
-        return updatedEntity;
-    }
 
     @Override
-    public void deleteById( Long id, Long clientId ) {
-
-        Assert.notNull( id, "id cannot be null" );
-        Assert.notNull( clientId, "clientId cannot be null" );
-
-        log.info( "Starting method deleteById. id: {}, clientId: {}", id, clientId );
-
-        log.debug( "Fetching entity with ID: {}", id );
-        AdcClientCostCenterEntity entity = costCenterRepository.findById( id ).orElseThrow(
-                () -> new ResourceNotFoundException() );
-
-        log.debug( "Deleting entity with ID: {}", id );
-        costCenterRepository.delete( entity );
-
-        log.info( "Finishing method deleteById. id: {}", id );
-    }
-
-    @Override
-    public Page<AdcClientCostCenterEntity> getCostCenterPaginated( Long clientId, Long productId, String field,
-                                                                   String filter, Integer pageNumber,
-                                                                   Integer pageSize ) {
-
-        log.info(
-                "Starting method getCostCenterPaginated with parameters - clientId: {}, productId: {}, field: {}, filter: {}, pageNumber: {}, pageSize: {}",
-                clientId, productId, field, filter, pageNumber, pageSize );
-
-        Assert.notNull( clientId, "clientId cannot be null" );
-
-        log.debug( "Creating pageable object with pageNumber: {} and pageSize: {}", pageNumber, pageSize );
-        Pageable pageable = PageRequest.of( pageNumber, pageSize );
-
-        log.debug( "Building specification for query" );
-        Specification<AdcClientCostCenterEntity> specification = ( root, query, criteriaBuilder ) -> {
-            Predicate predicate = criteriaBuilder.equal( root.get( "clientId" ), clientId );
-            log.trace( "Initial predicate: clientId = {}", clientId );
-
-            if ( field != null && filter != null ) {
-                log.debug( "Adding filter to specification - field: {}, filter: {}", field, filter );
-                predicate = criteriaBuilder.and( predicate,
-                        criteriaBuilder.like( root.get( field ), "%" + filter + "%" ) );
-            }
-
-            return predicate;
-        };
-
-        log.debug( "Executing repository query with specification and pageable" );
-        Page<AdcClientCostCenterEntity> result = costCenterRepository.findAll( specification, pageable );
-
-        log.info( "Finished method getCostCenterPaginated. Total elements found: {}", result.getTotalElements() );
-        return result;
-    }
-
-    @Override
-    public byte[] getImportTemplateFile( Long clientId ) {
-        log.info( "Starting method getImportTemplateFile" );
-        return new byte[0];
-    }
-
-    @Override
-    public AdcClientCostCenterEntity importData( ClientCostCenterDTO clientCostCenterDTO, Long clientId ) {
+    public AdcClientCostCenterEntity importData( ClientCostCenterDTO clientCostCenterDTO ) {
         log.info( "Starting method importData" );
         return null;
     }
@@ -238,12 +154,12 @@ public class CostCenterServiceImpl implements CostCenterService {
             problems.add(
                     new ProblemObject( "description", String.format( EXCEPTION_REQUIRED_NOT_FOUND, "Descrição" ) ) );
         }
-
+/*
         if ( !problems.isEmpty() ) {
             log.warn( "Validation errors found: {}", problems );
             throw new ValidationException( EXCEPTION_INVALID_DATA, problems );
         }
-
+*/
         log.info( "Validation successful for ClientCostCenterDTO: {}", clientCostCenterDTO );
         return problems;
     }
