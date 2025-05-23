@@ -43,16 +43,16 @@ public class CostCenterController {
     }
 
     @Operation(summary = "Validate cost center", description = "[validate] This method should validate a client cost center")
-    @PostMapping(path = "/validate/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(path = "/validate", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> validateCostCenter(
             @RequestBody ClientCostCenterDTO clientCostCenterDTO) throws ValidationException {
          costCenterService.validate( clientCostCenterDTO );
         return ResponseEntity.ok().build();
     }
 
-    @Operation(summary = "Create list cost center by Id", description = "[findById] This method should create a client cost center")
-    @PostMapping(path = "/entity", produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody List<AdcClientCostCenterEntity> listCostCenters(
+    @Operation(summary = "Create list cost center by Id", description = "[persistListCostCenters] This method should create list a client cost center")
+    @PostMapping(path = "/entity/persist-list", produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody List<AdcClientCostCenterEntity> persistListCostCenters(
             @RequestBody List<ClientCostCenterDTO> clientCostCenterDTOs) throws ValidationException {
         return costCenterService.persistList(clientCostCenterDTOs);
     }
@@ -64,11 +64,18 @@ public class CostCenterController {
         return costCenterService.save( clientCostCenterDTO );
     }
 
-    @Operation(summary = "Import cost center by Id", description = "[findById] This method should create a imported client cost center")
+    @Operation(summary = "Import cost center by Id", description = "[importCostCenter] This method should create a imported client cost center")
     @PostMapping(path = "/import-data", produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody AdcClientCostCenterEntity importCostCenter(
-            @RequestBody ClientCostCenterDTO clientCostCenterDTO ) {
+            @RequestBody ClientCostCenterDTO clientCostCenterDTO ) throws ValidationException {
         return costCenterService.importData( clientCostCenterDTO );
+    }
+
+    @Operation(summary = "Import cost center by Id seed Data", description = "[getCostCenterSeedData] This method should seed data client cost center")
+    @GetMapping(path = "/seed-data/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody AdcClientCostCenterEntity getCostCenterSeedData(
+            @PathVariable(name = "id", required = true) @Parameter(description = "id") Long id ) throws ValidationException {
+        return costCenterService.findByClientIdSeedData( id );
     }
 
 }

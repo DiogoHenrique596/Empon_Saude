@@ -73,7 +73,7 @@ class CostCenterControllerTest {
     }
 
     @Test
-    void importCostCenter_validDto_returnsImportedEntity() {
+    void importCostCenter_validDto_returnsImportedEntity() throws ValidationException {
         when( costCenterService.importData( validDto  ) ).thenReturn( validEntity );
 
         AdcClientCostCenterEntity result = costCenterController.importCostCenter( validDto );

@@ -17,6 +17,9 @@ public interface CostCenterService {
     AdcClientCostCenterEntity validate( ClientCostCenterDTO clientCostCenterDTO ) throws ValidationException;
 
     List<AdcClientCostCenterEntity> persistList( List<ClientCostCenterDTO> clientCostCenterDTO ) throws ValidationException;
-    AdcClientCostCenterEntity importData( ClientCostCenterDTO clientCostCenterDTO );
+
+    AdcClientCostCenterEntity importData( ClientCostCenterDTO clientCostCenterDTO ) throws ValidationException;
+
+    AdcClientCostCenterEntity findByClientIdSeedData( Long clientId ) throws ValidationException;
 
 }

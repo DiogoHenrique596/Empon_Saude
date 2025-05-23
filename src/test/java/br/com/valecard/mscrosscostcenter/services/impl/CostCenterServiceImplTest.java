@@ -87,21 +87,28 @@ class CostCenterServiceImplTest {
     }
 
     @Test
-    void save_missingBranch_throwsValidationException() {
-        validDto.setBranch( null );
-        validDto.setCode( null );
-        validDto.setDescription( null );
-        ValidationException exception = assertThrows( ValidationException.class,
-                () -> service.save( validDto ) );
-        assertTrue( exception.getMessage().equals( EXCEPTION_INVALID_DATA ) );
+    void save_nullBranch_throwsValidationException() {
+        validDto.setBranch(null);
+        ValidationException exception = assertThrows(ValidationException.class,
+                () -> service.save(validDto));
+        assertTrue(exception.getMessage().contains("inválidos"));
+    }
+
+       @Test
+    void save_blankDescription_throwsValidationException() {
+        validDto.setDescription("   ");
+        ValidationException exception = assertThrows(ValidationException.class,
+                () -> service.save(validDto));
+        assertEquals(EXCEPTION_INVALID_DATA, exception.getMessage());
     }
 
     @Test
-    void importData_stub_returnsNull() {
-        assertNull( service.importData( validDto ) );
+    void save_blankCostCenter_throwsValidationException() {
+        validDto.setCostCenter(" ");
+        ValidationException exception = assertThrows(ValidationException.class,
+                () -> service.save(validDto));
+        assertEquals(EXCEPTION_INVALID_DATA, exception.getMessage());
     }
-
-
     @Test
     void persistList_validDTOs_savesAndReturnsList() throws ValidationException {
         List<ClientCostCenterDTO> dtos = Arrays.asList(validDto, validDto);

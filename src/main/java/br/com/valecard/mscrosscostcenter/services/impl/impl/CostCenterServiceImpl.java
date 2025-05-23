@@ -119,7 +119,11 @@ public class CostCenterServiceImpl implements CostCenterService {
         log.info( "Starting method save.  costCenterDTO: {}",
                  clientCostCenterDTO );
 
-        validateClientCostCenterDTO( clientCostCenterDTO );
+        List<ProblemObject> problems = validateClientCostCenterDTO( clientCostCenterDTO );
+        if ( !problems.isEmpty() ) {
+            log.warn( "Validation errors found: {}", problems );
+            throw new ValidationException( EXCEPTION_INVALID_DATA, problems );
+        }
 
         log.debug( "Mapping ClientCostCenterDTO to AdcClientCostCenterEntity. DTO: {}", clientCostCenterDTO );
         AdcClientCostCenterEntity entity = ClientCostCenterMapper.toEntity( clientCostCenterDTO );
@@ -127,19 +131,52 @@ public class CostCenterServiceImpl implements CostCenterService {
         log.debug( "Saving entity to repository. Entity: {}", entity );
         entity = costCenterRepository.save( entity );
 
+        log.debug( "Entity saved. Entity ID: {}", entity.getId() );
+
         log.info( "Successfully saved entity. Entity ID: {}", entity.getId() );
         return entity;
     }
 
 
     @Override
-    public AdcClientCostCenterEntity importData( ClientCostCenterDTO clientCostCenterDTO ) {
+    public AdcClientCostCenterEntity importData( ClientCostCenterDTO clientCostCenterDTO ) throws ValidationException {
         log.info( "Starting method importData" );
-        return null;
+        return this.save(clientCostCenterDTO);
     }
 
-    private List<ProblemObject> validateClientCostCenterDTO( ClientCostCenterDTO clientCostCenterDTO ) throws
-            ValidationException {
+    @Override
+    public AdcClientCostCenterEntity findByClientIdSeedData(Long clientId) throws ValidationException {
+        log.info( "Starting method seedData with clientId: {}", clientId );
+
+        List<Object[]> result = costCenterRepository.findByClientIdSeedData( clientId );
+        if ( result.isEmpty() ) {
+            log.warn( "No data found for clientId: {}", clientId );
+            return null;
+        }
+
+        Object[] row = result.get(0);
+        ClientCostCenterDTO clientCostCenterDTO = new ClientCostCenterDTO();
+        clientCostCenterDTO.setBranch((Integer) row[0]);
+        clientCostCenterDTO.setCode((Integer) row[1]);
+        clientCostCenterDTO.setDescription((String) row[2]);
+        clientCostCenterDTO.setCostCenter("1");
+
+        List<ProblemObject> validationErrors = validateClientCostCenterDTO(clientCostCenterDTO);
+        if( !validationErrors.isEmpty() ){
+            log.warn( "Validation errors found: {}", validationErrors );
+            throw new ValidationException( EXCEPTION_INVALID_DATA, validationErrors );
+        }
+
+        log.debug("Mapping clientCostCenterDTO to AdcBranchFleetEntity in persistList. DTO: {}", clientCostCenterDTO);
+        AdcClientCostCenterEntity entity = ClientCostCenterMapper.toEntity(clientCostCenterDTO);
+        entity.setClientId(clientId);
+        log.info("Finishing method seedData with clientId: {}", clientId);
+
+        return entity;
+
+    }
+
+    private List<ProblemObject> validateClientCostCenterDTO( ClientCostCenterDTO clientCostCenterDTO ) {
 
         log.info( "Starting validation for ClientCostCenterDTO: {}", clientCostCenterDTO );
         List<ProblemObject> problems = new ArrayList<>();
@@ -154,12 +191,11 @@ public class CostCenterServiceImpl implements CostCenterService {
             problems.add(
                     new ProblemObject( "description", String.format( EXCEPTION_REQUIRED_NOT_FOUND, "Descrição" ) ) );
         }
-/*
-        if ( !problems.isEmpty() ) {
-            log.warn( "Validation errors found: {}", problems );
-            throw new ValidationException( EXCEPTION_INVALID_DATA, problems );
+        if ( StringUtils.isBlank( clientCostCenterDTO.getCostCenter() ) ) {
+            problems.add(
+                    new ProblemObject( "costCenter", String.format( EXCEPTION_REQUIRED_NOT_FOUND, "CostCenter" ) ) );
         }
-*/
+
         log.info( "Validation successful for ClientCostCenterDTO: {}", clientCostCenterDTO );
         return problems;
     }
