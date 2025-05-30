@@ -7,7 +7,6 @@ import java.io.Serializable;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "PESSOA_FISICA")
 @Getter
 @Setter
 @NoArgsConstructor

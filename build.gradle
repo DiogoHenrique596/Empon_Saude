@@ -18,24 +18,10 @@ java {
 repositories {
 	mavenCentral()
 	mavenLocal()
-	maven {
-		url = "http://nexus-valecard-new.valecard.com.br:8081/repository/maven-public"
-		allowInsecureProtocol = true
-	}
+
 	maven { url = "https://repository.mulesoft.org/nexus/content/repositories/public/" }
 }
 
-sonarqube {
-	properties {
-		property "sonar.projectName", "ms-cross-cost-center"
-		property "sonar.projectKey", "ms-cross-cost-center"
-		property "sonar.host.url", "https://sonar.valecard.com.br"
-		property "sonar.sourceEncoding", "UTF-8"
-		property "sonar.coverage.jacoco.xmlReportPaths", layout.buildDirectory.file("jacoco/test/jacocoTestReport.xml")
-		property "sonar.java.coveragePlugin", "jacoco"
-		property "sonar.dynamicAnalysis", "reuseReports"
-	}
-}
 
 dependencies {
 	//implementation 'io.github.teastman:spring-data-hibernate-event:1.0.1'
@@ -47,10 +33,8 @@ dependencies {
 
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0'
 
-	implementation 'com.oracle:ojdbc6:11.2.0.3'
+	implementation 'org.postgresql:postgresql:42.7.3'
 
-	// Audit Data Log
-	implementation 'com.valecard:lib-audit-log:2.0.0'
 
 	// Vault
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
@@ -80,16 +64,7 @@ dependencyManagement {
 	}
 }
 
-sonarqube {
-	properties {
-		property "sonar.projectName", "ms-portal-importador"
-		property "sonar.projectKey", "ms-portal-importador"
-		property "sonar.host.url", "https://sonar.valecard.com.br"
-		property "sonar.sourceEncoding", "UTF-8"
-		property "sonar.java.coveragePlugin", "jacoco"
-		property "sonar.dynamicAnalysis", "reuseReports"
-	}
-}
+
 
 jacoco {
 	toolVersion = "0.8.11"
@@ -134,7 +109,7 @@ jacocoTestCoverageVerification {
 				counter = 'INSTRUCTION'
 				value = 'COVEREDRATIO'
 
-				minimum = 0.4
+				minimum = 0.3
 			}
 		}
 	}

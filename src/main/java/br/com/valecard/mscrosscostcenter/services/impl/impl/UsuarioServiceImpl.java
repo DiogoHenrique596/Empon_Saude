@@ -1,0 +1,119 @@
+package br.com.valecard.mscrosscostcenter.services.impl.impl;
+
+import br.com.valecard.mscrosscostcenter.db.entities.UsuarioEntity;
+import br.com.valecard.mscrosscostcenter.db.repositories.UsuarioRepository;
+import br.com.valecard.mscrosscostcenter.services.impl.UsuarioService;
+import br.com.valecard.mscrosscostcenter.services.impl.dtos.UsuarioDTO;
+import br.com.valecard.mscrosscostcenter.services.impl.exceptions.ResourceNotFoundException;
+import br.com.valecard.mscrosscostcenter.services.impl.exceptions.ValidationException;
+import br.com.valecard.mscrosscostcenter.services.impl.exceptions.dtos.ProblemObject;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Service
+@Slf4j
+public class UsuarioServiceImpl implements UsuarioService {
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
+    @Override
+    public UsuarioEntity findById(Integer id) {
+        Assert.notNull(id, "id não pode ser nulo");
+        log.info("Buscando usuário por id: {}", id);
+        return usuarioRepository.findById(id)
+                .orElseThrow(ResourceNotFoundException::new);
+    }
+
+    @Override
+    public List<UsuarioEntity> findAll(UsuarioDTO usuarioDTO) throws ValidationException {
+        log.info("Buscando todos os usuários");
+        return usuarioRepository.findAll();
+    }
+
+    @Override
+    public UsuarioEntity save(UsuarioDTO usuarioDTO) throws ValidationException {
+        Assert.notNull(usuarioDTO, "usuarioDTO não pode ser nulo");
+        log.info("Salvando usuário: {}", usuarioDTO);
+
+        List<ProblemObject> problemas = validateUsuarioDTO(usuarioDTO);
+        if (!problemas.isEmpty()) {
+            log.warn("Erros de validação: {}", problemas);
+            throw new ValidationException("Dados inválidos", problemas);
+        }
+
+        UsuarioEntity entity = toEntity(usuarioDTO);
+        entity = usuarioRepository.save(entity);
+        log.info("Usuário salvo com id: {}", entity.getId());
+        return entity;
+    }
+
+    @Override
+    public UsuarioEntity update(UsuarioDTO usuarioDTO) throws ValidationException {
+        Assert.notNull(usuarioDTO, "usuarioDTO não pode ser nulo");
+        Assert.notNull(usuarioDTO.getId(), "id do usuário não pode ser nulo");
+        log.info("Atualizando usuário: {}", usuarioDTO);
+
+        UsuarioEntity existente = usuarioRepository.findById(usuarioDTO.getId())
+                .orElseThrow(ResourceNotFoundException::new);
+
+        List<ProblemObject> problemas = validateUsuarioDTO(usuarioDTO);
+        if (!problemas.isEmpty()) {
+            log.warn("Erros de validação: {}", problemas);
+            throw new ValidationException("Dados inválidos", problemas);
+        }
+
+        UsuarioEntity entity = toEntity(usuarioDTO);
+        entity.setId(existente.getId());
+        entity = usuarioRepository.save(entity);
+        log.info("Usuário atualizado com id: {}", entity.getId());
+        return entity;
+    }
+
+    @Override
+    public UsuarioEntity delete(Integer id) throws ValidationException {
+        Assert.notNull(id, "id não pode ser nulo");
+        log.info("Deletando usuário com id: {}", id);
+
+        UsuarioEntity entity = usuarioRepository.findById(id)
+                .orElseThrow(ResourceNotFoundException::new);
+        usuarioRepository.delete(entity);
+        log.info("Usuário deletado com id: {}", id);
+        return entity;
+    }
+
+    @Override
+    public UsuarioEntity validate(UsuarioDTO usuarioDTO) throws ValidationException {
+        Assert.notNull(usuarioDTO, "usuarioDTO não pode ser nulo");
+        log.info("Validando usuário: {}", usuarioDTO);
+
+        List<ProblemObject> problemas = validateUsuarioDTO(usuarioDTO);
+        if (!problemas.isEmpty()) {
+            log.warn("Erros de validação: {}", problemas);
+            throw new ValidationException("Dados inválidos", problemas);
+        }
+        return toEntity(usuarioDTO);
+    }
+
+    private List<ProblemObject> validateUsuarioDTO(UsuarioDTO usuarioDTO) {
+        List<ProblemObject> problemas = new ArrayList<>();
+        if (usuarioDTO.getNome() == null || usuarioDTO.getNome().trim().isEmpty()) {
+            problemas.add(new ProblemObject("nome", "Nome é obrigatório"));
+        }
+        return problemas;
+    }
+
+    // Conversão manual de DTO para Entity
+    private UsuarioEntity toEntity(UsuarioDTO dto) {
+        UsuarioEntity entity = new UsuarioEntity();
+        entity.setId(dto.getId());
+        entity.setNome(dto.getNome());
+        entity.setEmail(dto.getEmail());
+        return entity;
+    }
+}
