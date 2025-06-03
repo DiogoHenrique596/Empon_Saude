@@ -5,26 +5,33 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serializable;
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UsuarioDTO implements java.io.Serializable {
+public class PessoaDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     private Integer id;
+    private String tipo;
     private String nome;
-    private String email;
-    private String senha;
+    private LocalDateTime dataCadastro;
+    private String telefone;
+    private String telefoneFixo;
 
     @Override
     public String toString() {
-        return "UsuarioDTO{" +
+        return "PessoaDTO{" +
                 "id=" + id +
+                ", tipo='" + tipo + '\'' +
                 ", nome='" + nome + '\'' +
-                ", email='" + email + '\'' +
-                ", senha='" + senha + '\'' +
+                ", dataCadastro=" + dataCadastro +
+                ", telefone='" + telefone + '\'' +
+                ", telefoneFixo='" + telefoneFixo + '\'' +
                 '}';
     }
 }

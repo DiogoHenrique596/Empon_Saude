@@ -10,6 +10,6 @@ import java.util.List;
 
 @Repository
 public interface PermissaoRepository extends JpaRepository<PermissaoEntity, Integer> {
-    @Query(value = "SELECT p.id AS id, p.nome AS nome, p.descricao AS descricao FROM PERMISSAO p WHERE p.id = :permissaoId", nativeQuery = true)
+    @Query("SELECT p.id, p.nome FROM PermissaoEntity p WHERE p.id = :permissaoId")
     List<Object[]> findPermissaoBasicDataById(@Param("permissaoId") Integer permissaoId);
 }

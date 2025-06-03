@@ -7,7 +7,6 @@ import java.io.Serializable;
 
 @Entity
 @Table(name = "usuario_permissao")
-@IdClass(UsuarioPermissaoId.class)
 @Getter
 @Setter
 @NoArgsConstructor
@@ -15,21 +14,28 @@ import java.io.Serializable;
 public class UsuarioPermissaoEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
+    @EmbeddedId
+    @AttributeOverrides({
+            @AttributeOverride(name = "usuarioId", column = @Column(name = "usuario_id", nullable = false)),
+            @AttributeOverride(name = "permissaoId", column = @Column(name = "permissao_id", nullable = false))
+    })
+    private UsuarioPermissaoId id;
 
-    @Id
     @ManyToOne
-    @JoinColumn(name = "usuario_id", nullable = false)
+    @MapsId("usuarioId")
+    @JoinColumn(name = "usuario_id", insertable = false, updatable = false)
     private UsuarioEntity usuario;
 
-    @Id
     @ManyToOne
-    @JoinColumn(name = "permissao_id", nullable = false)
+    @MapsId("permissaoId")
+    @JoinColumn(name = "permissao_id", insertable = false, updatable = false)
     private PermissaoEntity permissao;
 
     @Override
     public String toString() {
         return "UsuarioPermissaoEntity{" +
-                "usuario=" + usuario +
+                "id=" + id +
+                ", usuario=" + usuario +
                 ", permissao=" + permissao +
                 '}';
     }

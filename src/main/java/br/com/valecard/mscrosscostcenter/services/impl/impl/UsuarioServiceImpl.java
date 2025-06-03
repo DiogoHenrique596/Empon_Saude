@@ -1,12 +1,14 @@
 package br.com.valecard.mscrosscostcenter.services.impl.impl;
 
 import br.com.valecard.mscrosscostcenter.db.entities.UsuarioEntity;
+import br.com.valecard.mscrosscostcenter.db.repositories.UsuarioPermissaoRepository;
 import br.com.valecard.mscrosscostcenter.db.repositories.UsuarioRepository;
 import br.com.valecard.mscrosscostcenter.services.impl.UsuarioService;
 import br.com.valecard.mscrosscostcenter.services.impl.dtos.UsuarioDTO;
 import br.com.valecard.mscrosscostcenter.services.impl.exceptions.ResourceNotFoundException;
 import br.com.valecard.mscrosscostcenter.services.impl.exceptions.ValidationException;
 import br.com.valecard.mscrosscostcenter.services.impl.exceptions.dtos.ProblemObject;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,12 +24,17 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
+    @Autowired
+    private UsuarioPermissaoRepository usuarioPermissaoRepository;
+
     @Override
     public UsuarioEntity findById(Integer id) {
         Assert.notNull(id, "id não pode ser nulo");
         log.info("Buscando usuário por id: {}", id);
-        return usuarioRepository.findById(id)
+        UsuarioEntity usuarioEntity = usuarioRepository.findById(id)
                 .orElseThrow(ResourceNotFoundException::new);
+        log.info("Método de finalização findById com id: {}", id);
+        return usuarioEntity;
     }
 
     @Override
@@ -68,20 +75,29 @@ public class UsuarioServiceImpl implements UsuarioService {
             throw new ValidationException("Dados inválidos", problemas);
         }
 
-        UsuarioEntity entity = toEntity(usuarioDTO);
-        entity.setId(existente.getId());
-        entity = usuarioRepository.save(entity);
+        // Atualiza apenas os campos do DTO que não são nulos
+        if (usuarioDTO.getNome() != null) existente.setNome(usuarioDTO.getNome());
+        if (usuarioDTO.getEmail() != null) existente.setEmail(usuarioDTO.getEmail());
+        if (usuarioDTO.getSenha() != null) existente.setSenha(usuarioDTO.getSenha());
+
+        UsuarioEntity entity = usuarioRepository.save(existente);
         log.info("Usuário atualizado com id: {}", entity.getId());
         return entity;
     }
 
     @Override
+    @Transactional
     public UsuarioEntity delete(Integer id) throws ValidationException {
         Assert.notNull(id, "id não pode ser nulo");
         log.info("Deletando usuário com id: {}", id);
 
         UsuarioEntity entity = usuarioRepository.findById(id)
                 .orElseThrow(ResourceNotFoundException::new);
+
+        // Remove permissões relacionadas
+
+        usuarioPermissaoRepository.deleteByUsuarioId(id);
+
         usuarioRepository.delete(entity);
         log.info("Usuário deletado com id: {}", id);
         return entity;
@@ -114,6 +130,7 @@ public class UsuarioServiceImpl implements UsuarioService {
         entity.setId(dto.getId());
         entity.setNome(dto.getNome());
         entity.setEmail(dto.getEmail());
+        entity.setSenha(dto.getSenha());
         return entity;
     }
 }

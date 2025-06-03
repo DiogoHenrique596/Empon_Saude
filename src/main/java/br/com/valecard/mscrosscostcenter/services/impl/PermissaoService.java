@@ -3,6 +3,7 @@ package br.com.valecard.mscrosscostcenter.services.impl;
 import br.com.valecard.mscrosscostcenter.db.entities.PermissaoEntity;
 import br.com.valecard.mscrosscostcenter.services.impl.dtos.PermissaoDTO;
 import br.com.valecard.mscrosscostcenter.services.impl.exceptions.ValidationException;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 

@@ -10,6 +10,6 @@ import java.util.List;
 
 @Repository
 public interface UsuarioRepository extends JpaRepository<UsuarioEntity, Integer> {
-    @Query(value = "SELECT u.id AS id, u.nome AS nome, u.email AS email FROM USUARIO u WHERE u.id = :userId", nativeQuery = true)
+    @Query("SELECT u.id, u.nome, u.email FROM UsuarioEntity u WHERE u.id = :userId")
     List<Object[]> findUserBasicDataById(@Param("userId") Integer userId);
 }
