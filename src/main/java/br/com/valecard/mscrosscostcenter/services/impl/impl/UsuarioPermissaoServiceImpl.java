@@ -40,7 +40,7 @@ public class UsuarioPermissaoServiceImpl implements UsuarioPermissaoService {
     }
 
     @Override
-    public List<UsuarioPermissaoEntity> findAll(UsuarioPermissaoDTO usuarioPermissaoDTO) throws ValidationException {
+    public List<UsuarioPermissaoEntity> findAll() throws ValidationException {
         log.info("Buscando todos os UsuarioPermissao");
         return usuarioPermissaoRepository.findAll();
     }
@@ -63,54 +63,17 @@ public class UsuarioPermissaoServiceImpl implements UsuarioPermissaoService {
     }
 
     @Override
-    public UsuarioPermissaoEntity update(UsuarioPermissaoDTO usuarioPermissaoDTO) throws ValidationException {
-        Assert.notNull(usuarioPermissaoDTO, "usuarioPermissaoDTO não pode ser nulo");
-        Assert.notNull(usuarioPermissaoDTO.getUsuarioId(), "usuarioId não pode ser nulo");
-        Assert.notNull(usuarioPermissaoDTO.getPermissaoId(), "permissaoId não pode ser nulo");
-        log.info("Atualizando UsuarioPermissao: {}", usuarioPermissaoDTO);
+    public boolean delete(UsuarioPermissaoId id) throws ValidationException {
 
-        UsuarioPermissaoId id = new UsuarioPermissaoId(
-                usuarioPermissaoDTO.getUsuarioId(),
-                usuarioPermissaoDTO.getPermissaoId()
-        );
-        usuarioPermissaoRepository.findById(id)
-                .orElseThrow(ResourceNotFoundException::new);
-
-        List<ProblemObject> problemas = validateUsuarioPermissaoDTO(usuarioPermissaoDTO);
-        if (!problemas.isEmpty()) {
-            log.warn("Erros de validação: {}", problemas);
-            throw new ValidationException("Dados inválidos", problemas);
-        }
-
-        UsuarioPermissaoEntity entity = toEntity(usuarioPermissaoDTO);
-        entity = usuarioPermissaoRepository.save(entity);
-        log.info("UsuarioPermissao atualizado: {}", entity);
-        return entity;
-    }
-
-    @Override
-    public UsuarioPermissaoEntity delete(UsuarioPermissaoId id) throws ValidationException {
         Assert.notNull(id, "id não pode ser nulo");
-        log.info("Deletando UsuarioPermissao com id: {}", id);
+        log.info("Excluindo UsuarioPermissao com id: {}", id);
         UsuarioPermissaoEntity entity = usuarioPermissaoRepository.findById(id)
                 .orElseThrow(ResourceNotFoundException::new);
         usuarioPermissaoRepository.delete(entity);
-        log.info("UsuarioPermissao deletado com id: {}", id);
-        return entity;
+        log.info("UsuarioPermissao excluído com id: {}", id);
+        return true;
     }
 
-    @Override
-    public UsuarioPermissaoEntity validate(UsuarioPermissaoDTO usuarioPermissaoDTO) throws ValidationException {
-        Assert.notNull(usuarioPermissaoDTO, "usuarioPermissaoDTO não pode ser nulo");
-        log.info("Validando UsuarioPermissao: {}", usuarioPermissaoDTO);
-
-        List<ProblemObject> problemas = validateUsuarioPermissaoDTO(usuarioPermissaoDTO);
-        if (!problemas.isEmpty()) {
-            log.warn("Erros de validação: {}", problemas);
-            throw new ValidationException("Dados inválidos", problemas);
-        }
-        return toEntity(usuarioPermissaoDTO);
-    }
 
     private List<ProblemObject> validateUsuarioPermissaoDTO(UsuarioPermissaoDTO dto) {
         List<ProblemObject> problemas = new ArrayList<>();

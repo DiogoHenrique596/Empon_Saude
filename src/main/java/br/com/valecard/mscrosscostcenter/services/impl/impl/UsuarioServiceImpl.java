@@ -38,7 +38,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
-    public List<UsuarioEntity> findAll(UsuarioDTO usuarioDTO) throws ValidationException {
+    public List<UsuarioEntity> findAll() throws ValidationException {
         log.info("Buscando todos os usuários");
         return usuarioRepository.findAll();
     }
@@ -58,6 +58,20 @@ public class UsuarioServiceImpl implements UsuarioService {
         entity = usuarioRepository.save(entity);
         log.info("Usuário salvo com id: {}", entity.getId());
         return entity;
+    }
+
+    @Override
+    public boolean delete(Integer id) throws ValidationException {
+
+        Assert.notNull(id, "id não pode ser nulo");
+        log.info("Excluindo usuário com id: {}", id);
+
+        UsuarioEntity entity = usuarioRepository.findById(id)
+                .orElseThrow(ResourceNotFoundException::new);
+
+        usuarioRepository.delete(entity);
+        log.info("Usuário excluído com id: {}", id);
+        return true;
     }
 
     @Override
@@ -85,36 +99,8 @@ public class UsuarioServiceImpl implements UsuarioService {
         return entity;
     }
 
-    @Override
-    @Transactional
-    public UsuarioEntity delete(Integer id) throws ValidationException {
-        Assert.notNull(id, "id não pode ser nulo");
-        log.info("Deletando usuário com id: {}", id);
 
-        UsuarioEntity entity = usuarioRepository.findById(id)
-                .orElseThrow(ResourceNotFoundException::new);
 
-        // Remove permissões relacionadas
-
-        usuarioPermissaoRepository.deleteByUsuarioId(id);
-
-        usuarioRepository.delete(entity);
-        log.info("Usuário deletado com id: {}", id);
-        return entity;
-    }
-
-    @Override
-    public UsuarioEntity validate(UsuarioDTO usuarioDTO) throws ValidationException {
-        Assert.notNull(usuarioDTO, "usuarioDTO não pode ser nulo");
-        log.info("Validando usuário: {}", usuarioDTO);
-
-        List<ProblemObject> problemas = validateUsuarioDTO(usuarioDTO);
-        if (!problemas.isEmpty()) {
-            log.warn("Erros de validação: {}", problemas);
-            throw new ValidationException("Dados inválidos", problemas);
-        }
-        return toEntity(usuarioDTO);
-    }
 
     private List<ProblemObject> validateUsuarioDTO(UsuarioDTO usuarioDTO) {
         List<ProblemObject> problemas = new ArrayList<>();

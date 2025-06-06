@@ -24,8 +24,8 @@ public class PessoaController {
     }
 
     @GetMapping
-    public ResponseEntity<List<PessoaEntity>> findAll(PessoaDTO pessoaDTO) throws ValidationException {
-        List<PessoaEntity> pessoas = pessoaService.findAll(pessoaDTO);
+    public ResponseEntity<List<PessoaEntity>> findAll() throws ValidationException {
+        List<PessoaEntity> pessoas = pessoaService.findAll();
         return ResponseEntity.ok(pessoas);
     }
 
@@ -43,8 +43,7 @@ public class PessoaController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<PessoaEntity> delete(@PathVariable Integer id) throws ValidationException {
-        PessoaEntity pessoa = pessoaService.delete(id);
-        return ResponseEntity.ok(pessoa);
+    public boolean delete(@PathVariable Integer id) throws ValidationException {
+        return  pessoaService.delete(id);
     }
 }

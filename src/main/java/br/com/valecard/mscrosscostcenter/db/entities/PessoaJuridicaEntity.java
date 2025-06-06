@@ -1,18 +1,24 @@
 package br.com.valecard.mscrosscostcenter.db.entities;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Pattern;
 import lombok.*;
 
 import java.io.Serializable;
 import java.time.LocalDate;
 
 @Entity
+@Table(name = "pessoa_juridica")
+@PrimaryKeyJoinColumn(name = "pessoa_id")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Data
 public class PessoaJuridicaEntity extends PessoaEntity implements Serializable {
     private static final long serialVersionUID = 1L;
+
 
     @Column(name = "cnpj", nullable = false, length = 18, unique = true)
     private String cnpj;
@@ -29,14 +35,14 @@ public class PessoaJuridicaEntity extends PessoaEntity implements Serializable {
     @Column(name = "inscricao_municipal", length = 30)
     private String inscricaoMunicipal;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @Column(name = "data_abertura")
     private LocalDate dataAbertura;
 
     @Override
     public String toString() {
         return "PessoaJuridicaEntity{" +
-                "id=" + getId() +
-                ", cnpj='" + cnpj + '\'' +
+                "cnpj='" + cnpj + '\'' +
                 ", razaoSocial='" + razaoSocial + '\'' +
                 ", nomeFantasia='" + nomeFantasia + '\'' +
                 ", inscricaoEstadual='" + inscricaoEstadual + '\'' +
@@ -44,4 +50,6 @@ public class PessoaJuridicaEntity extends PessoaEntity implements Serializable {
                 ", dataAbertura=" + dataAbertura +
                 '}';
     }
+
+
 }

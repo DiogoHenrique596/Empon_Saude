@@ -27,13 +27,7 @@ public class PessoaFisicaDTO extends PessoaDTO implements Serializable {
     @Override
     public String toString() {
         return "PessoaFisicaDTO{" +
-                "id=" + getId() +
-                ", tipo='" + getTipo() + '\'' +
-                ", nome='" + getNome() + '\'' +
-                ", dataCadastro=" + getDataCadastro() +
-                ", telefone='" + getTelefone() + '\'' +
-                ", telefoneFixo='" + getTelefoneFixo() + '\'' +
-                ", cpf='" + cpf + '\'' +
+                "cpf='" + cpf + '\'' +
                 ", rg='" + rg + '\'' +
                 ", dataNascimento=" + dataNascimento +
                 ", sexo='" + sexo + '\'' +

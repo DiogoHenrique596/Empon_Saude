@@ -20,21 +20,17 @@ public class PessoaJuridicaDTO extends PessoaDTO implements Serializable {
     private String inscricaoMunicipal;
     private String razaoSocial;
     private String nomeFantasia;
+    private String dataAbertura;
 
     @Override
     public String toString() {
         return "PessoaJuridicaDTO{" +
-                "id=" + getId() +
-                ", tipo='" + getTipo() + '\'' +
-                ", nome='" + getNome() + '\'' +
-                ", dataCadastro=" + getDataCadastro() +
-                ", telefone='" + getTelefone() + '\'' +
-                ", telefoneFixo='" + getTelefoneFixo() + '\'' +
-                ", cnpj='" + cnpj + '\'' +
+                "cnpj='" + cnpj + '\'' +
                 ", inscricaoEstadual='" + inscricaoEstadual + '\'' +
                 ", inscricaoMunicipal='" + inscricaoMunicipal + '\'' +
                 ", razaoSocial='" + razaoSocial + '\'' +
                 ", nomeFantasia='" + nomeFantasia + '\'' +
+                ", dataAbertura='" + dataAbertura + '\'' +
                 '}';
     }
 }

@@ -10,11 +10,11 @@ public interface PessoaService {
 
     PessoaEntity findById(Integer id);
 
-    List<PessoaEntity> findAll(PessoaDTO pessoaDTO) throws ValidationException;
+    List<PessoaEntity> findAll() throws ValidationException;
 
     PessoaEntity save(PessoaDTO pessoaDTO) throws ValidationException;
 
     PessoaEntity update(PessoaDTO pessoaDTO) throws ValidationException;
 
-    PessoaEntity delete(Integer id) throws ValidationException;
+    boolean delete(Integer id) throws ValidationException;
 }

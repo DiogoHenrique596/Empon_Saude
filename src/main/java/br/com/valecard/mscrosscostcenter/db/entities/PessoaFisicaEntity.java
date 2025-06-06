@@ -1,16 +1,21 @@
 package br.com.valecard.mscrosscostcenter.db.entities;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Pattern;
 import lombok.*;
 
 import java.io.Serializable;
 import java.time.LocalDate;
 
 @Entity
+@Table(name = "pessoa_fisica")
+@PrimaryKeyJoinColumn(name = "pessoa_id")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Data
 public class PessoaFisicaEntity extends PessoaEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -20,10 +25,12 @@ public class PessoaFisicaEntity extends PessoaEntity implements Serializable {
     @Column(name = "rg", length = 20)
     private String rg;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @Column(name = "data_nascimento")
     private LocalDate dataNascimento;
 
     @Column(name = "sexo", length = 1)
+    @Pattern(regexp = "[FM]", message = "Sexo deve ser 'F' (Feminino) ou 'M' (Masculino)")
     private String sexo;
 
     @Column(name = "estado_civil", length = 20)
@@ -38,8 +45,7 @@ public class PessoaFisicaEntity extends PessoaEntity implements Serializable {
     @Override
     public String toString() {
         return "PessoaFisicaEntity{" +
-                "id=" + getId() +
-                ", cpf='" + cpf + '\'' +
+                "cpf='" + cpf + '\'' +
                 ", rg='" + rg + '\'' +
                 ", dataNascimento=" + dataNascimento +
                 ", sexo='" + sexo + '\'' +

@@ -11,6 +11,7 @@ import java.io.Serializable;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Data
 public class EnderecoEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 

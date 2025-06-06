@@ -11,7 +11,7 @@ public interface PermissaoService {
 
     PermissaoEntity findById(Integer id);
 
-    List<PermissaoEntity> findAll(PermissaoDTO permissaoDTO) throws ValidationException;
+    List<PermissaoEntity> findAll() throws ValidationException;
 
     PermissaoEntity save(PermissaoDTO permissaoDTO) throws ValidationException;
 

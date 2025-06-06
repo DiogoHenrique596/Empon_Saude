@@ -11,13 +11,9 @@ public interface UsuarioPermissaoService {
 
     UsuarioPermissaoEntity findById(UsuarioPermissaoId id);
 
-    List<UsuarioPermissaoEntity> findAll(UsuarioPermissaoDTO usuarioPermissaoDTO) throws ValidationException;
+    List<UsuarioPermissaoEntity> findAll() throws ValidationException;
 
     UsuarioPermissaoEntity save(UsuarioPermissaoDTO usuarioPermissaoDTO) throws ValidationException;
 
-    UsuarioPermissaoEntity update(UsuarioPermissaoDTO usuarioPermissaoDTO) throws ValidationException;
-
-    UsuarioPermissaoEntity delete(UsuarioPermissaoId id) throws ValidationException;
-
-    UsuarioPermissaoEntity validate(UsuarioPermissaoDTO usuarioPermissaoDTO) throws ValidationException;
+    boolean delete(UsuarioPermissaoId id) throws ValidationException;
 }

@@ -22,7 +22,7 @@ public class UsuarioPermissaoController {
     private UsuarioPermissaoService usuarioPermissaoService;
 
     @Operation(summary = "Buscar permissão de usuário por ID")
-    @GetMapping(path = "/{usuarioId}/{permissaoId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/{usuarioId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody UsuarioPermissaoEntity getPermissao(
             @PathVariable(name = "usuarioId") @Parameter(description = "ID do usuário") Integer usuarioId,
             @PathVariable(name = "permissaoId") @Parameter(description = "ID da permissão") Integer permissaoId) {
@@ -32,8 +32,8 @@ public class UsuarioPermissaoController {
 
     @Operation(summary = "Buscar todas as permissões de usuário")
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody List<UsuarioPermissaoEntity> getAllPermissoes() throws ValidationException {
-        return usuarioPermissaoService.findAll(new UsuarioPermissaoDTO());
+    public @ResponseBody List<UsuarioPermissaoEntity> findAll() throws ValidationException {
+        return usuarioPermissaoService.findAll();
     }
 
     @Operation(summary = "Criar permissão de usuário")
@@ -43,22 +43,11 @@ public class UsuarioPermissaoController {
         return usuarioPermissaoService.save(usuarioPermissaoDTO);
     }
 
-    @Operation(summary = "Atualizar permissão de usuário")
-    @PutMapping(path = "/{usuarioId}/{permissaoId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody UsuarioPermissaoEntity updatePermissao(
-            @PathVariable(name = "usuarioId") Integer usuarioId,
-            @PathVariable(name = "permissaoId") Integer permissaoId,
-            @RequestBody UsuarioPermissaoDTO usuarioPermissaoDTO) throws ValidationException {
-        usuarioPermissaoDTO.setUsuarioId(usuarioId);
-        usuarioPermissaoDTO.setPermissaoId(permissaoId);
-        return usuarioPermissaoService.update(usuarioPermissaoDTO);
-    }
-
     @Operation(summary = "Deletar permissão de usuário por ID")
-    @DeleteMapping(path = "/{usuarioId}/{permissaoId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody UsuarioPermissaoEntity deletePermissao(
-            @PathVariable(name = "usuarioId") Integer usuarioId,
-            @PathVariable(name = "permissaoId") Integer permissaoId) throws ValidationException {
+    @DeleteMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
+    public boolean deletePermissao(
+            @RequestParam(name = "usuarioId")@Parameter(description = "usuarioId") Integer usuarioId,
+            @RequestParam(name = "permissaoId")@Parameter(description = "permissaoId") Integer permissaoId) throws ValidationException {
         UsuarioPermissaoId id = new UsuarioPermissaoId(usuarioId, permissaoId);
         return usuarioPermissaoService.delete(id);
     }

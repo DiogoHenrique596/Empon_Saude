@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/rest/empon/usuario")
+@RequestMapping("api/rest/empon/usuarios")
 public class UsuarioController {
 
     @Autowired
@@ -29,9 +29,8 @@ public class UsuarioController {
 
     @Operation(summary = "Buscar todos os usuários")
     @GetMapping
-    public @ResponseBody List<UsuarioEntity> getAllUsuarios(
-            @RequestBody(required = false) UsuarioDTO usuarioDTO) throws ValidationException {
-        return usuarioService.findAll(usuarioDTO);
+    public @ResponseBody List<UsuarioEntity> findAll() throws ValidationException {
+        return usuarioService.findAll();
     }
 
     @Operation(summary = "Criar usuário")
@@ -50,8 +49,8 @@ public class UsuarioController {
 
     @Operation(summary = "Deletar usuário por ID")
     @DeleteMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody UsuarioEntity deleteUsuario(
-            @PathVariable(name = "id") @Parameter(description = "id") Integer id) throws ValidationException {
+    public boolean deleteUsuario (@PathVariable(name = "id")
+                                      @Parameter(description = "id") Integer id) throws ValidationException {
         return usuarioService.delete(id);
     }
 
