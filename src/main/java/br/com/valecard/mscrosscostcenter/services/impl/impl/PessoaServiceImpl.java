@@ -6,12 +6,10 @@ import br.com.valecard.mscrosscostcenter.services.impl.PessoaService;
 import br.com.valecard.mscrosscostcenter.services.impl.dtos.PessoaDTO;
 import br.com.valecard.mscrosscostcenter.services.impl.exceptions.ResourceNotFoundException;
 import br.com.valecard.mscrosscostcenter.services.impl.exceptions.ValidationException;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service

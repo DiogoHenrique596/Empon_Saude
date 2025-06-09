@@ -1,0 +1,17 @@
+package br.com.valecard.mscrosscostcenter.db.repositories;
+
+import br.com.valecard.mscrosscostcenter.db.entities.EnderecoEntity;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+public interface EnderecoRepository extends JpaRepository<EnderecoEntity, Integer> {
+
+    @Query("SELECT e FROM EnderecoEntity e WHERE e.pessoa.id = :pessoa_id")
+    List<EnderecoEntity> findByPessoaId(@Param("pessoa_id")Integer pessoaId);
+
+}

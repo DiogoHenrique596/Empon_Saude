@@ -19,7 +19,7 @@ public class EnderecoEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "pessoa_id")
     private PessoaEntity pessoa;
 

@@ -29,18 +29,6 @@ public class PessoaController {
         return ResponseEntity.ok(pessoas);
     }
 
-    @PostMapping
-    public ResponseEntity<PessoaEntity> save(@RequestBody PessoaDTO pessoaDTO) throws ValidationException {
-        PessoaEntity pessoa = pessoaService.save(pessoaDTO);
-        return ResponseEntity.ok(pessoa);
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<PessoaEntity> update(@PathVariable Integer id, @RequestBody PessoaDTO pessoaDTO) throws ValidationException {
-        pessoaDTO.setId(id);
-        PessoaEntity pessoa = pessoaService.update(pessoaDTO);
-        return ResponseEntity.ok(pessoa);
-    }
 
     @DeleteMapping("/{id}")
     public boolean delete(@PathVariable Integer id) throws ValidationException {

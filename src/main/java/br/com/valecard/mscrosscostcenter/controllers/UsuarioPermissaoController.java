@@ -44,7 +44,7 @@ public class UsuarioPermissaoController {
     }
 
     @Operation(summary = "Deletar permissão de usuário por ID")
-    @DeleteMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
+    @DeleteMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public boolean deletePermissao(
             @RequestParam(name = "usuarioId")@Parameter(description = "usuarioId") Integer usuarioId,
             @RequestParam(name = "permissaoId")@Parameter(description = "permissaoId") Integer permissaoId) throws ValidationException {

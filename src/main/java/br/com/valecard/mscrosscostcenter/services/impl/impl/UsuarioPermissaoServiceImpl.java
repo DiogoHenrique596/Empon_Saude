@@ -87,6 +87,7 @@ public class UsuarioPermissaoServiceImpl implements UsuarioPermissaoService {
     }
 
     private UsuarioPermissaoEntity toEntity(UsuarioPermissaoDTO dto) {
+
         UsuarioPermissaoEntity entity = new UsuarioPermissaoEntity();
         entity.setId(new UsuarioPermissaoId(dto.getUsuarioId(), dto.getPermissaoId()));
         entity.setUsuario(usuarioRepository.findById(dto.getUsuarioId())

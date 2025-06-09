@@ -110,7 +110,7 @@ public class UsuarioServiceImpl implements UsuarioService {
         return problemas;
     }
 
-    // Conversão manual de DTO para Entity
+
     private UsuarioEntity toEntity(UsuarioDTO dto) {
         UsuarioEntity entity = new UsuarioEntity();
         entity.setId(dto.getId());

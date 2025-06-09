@@ -60,9 +60,18 @@ public class PessoaFisicaSeviceImpl implements PessoaFisicaService {
         }
         PessoaFisicaEntity entity = pessoaFisicaRepository.findById(pessoaFisicaDTO.getId())
                 .orElseThrow(() -> new ValidationException("Pessoa Física não encontrada para ID: " + pessoaFisicaDTO.getId()));
-        PessoaFisicaEntity updatedEntity = toEntity(pessoaFisicaDTO);
-        updatedEntity.setId(entity.getId()); // garantir que o ID seja mantido
-        return pessoaFisicaRepository.save(updatedEntity);
+
+        if (pessoaFisicaDTO.getNome() != null) entity.setNome(pessoaFisicaDTO.getNome());
+        if (pessoaFisicaDTO.getRg() != null) entity.setRg(pessoaFisicaDTO.getRg());
+        if (pessoaFisicaDTO.getSexo() != null) entity.setSexo(pessoaFisicaDTO.getSexo());
+        if (pessoaFisicaDTO.getDataNascimento() != null) entity.setDataNascimento(pessoaFisicaDTO.getDataNascimento());
+        if (pessoaFisicaDTO.getEstadoCivil() != null) entity.setEstadoCivil(pessoaFisicaDTO.getEstadoCivil());
+        if (pessoaFisicaDTO.getNomeMae() != null) entity.setNomeMae(pessoaFisicaDTO.getNomeMae());
+        if (pessoaFisicaDTO.getNomePai() != null) entity.setNomePai(pessoaFisicaDTO.getNomePai());
+        if (pessoaFisicaDTO.getTelefoneFixo() != null) entity.setTelefoneFixo(pessoaFisicaDTO.getTelefoneFixo());
+        if (pessoaFisicaDTO.getTelefone() != null) entity.setTelefone(pessoaFisicaDTO.getTelefone());
+
+        return pessoaFisicaRepository.save(entity);
     }
 
     @Override

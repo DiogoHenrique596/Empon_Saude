@@ -48,6 +48,9 @@ public class PessoaJuridicaServiceImpl implements PessoaJuridicaService {
         if (pessoaJuridicaDTO.getCnpj() == null || pessoaJuridicaDTO.getCnpj().isEmpty()) {
             throw new ValidationException("CNPJ não pode ser nulo ou vazio");
         }
+        if (pessoaJuridicaRepository.findByCnpj(pessoaJuridicaDTO.getCnpj()) != null) {
+            throw new ValidationException("Já existe uma Pessoa Jurídica com este CNPJ");
+        }
         PessoaJuridicaEntity entity = new PessoaJuridicaEntity();
         toEntity(entity, pessoaJuridicaDTO);
         return pessoaJuridicaRepository.save(entity);
