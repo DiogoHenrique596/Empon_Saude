@@ -9,6 +9,8 @@ import java.util.Optional;
 
 public interface PessoaJuridicaService {
 
+
+
     PessoaJuridicaEntity findByCnpj(String cnpj) throws ValidationException;
 
     List<PessoaJuridicaEntity> findAll() throws ValidationException;

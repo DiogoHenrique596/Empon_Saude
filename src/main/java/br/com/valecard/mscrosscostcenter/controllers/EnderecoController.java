@@ -19,14 +19,14 @@ public class EnderecoController {
     private EnderecoService enderecoService;
 
     @Operation(summary = "Buscar endereços por ID de pessoa")
-    @GetMapping(path = "/{pessoa_id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/{pessoa_id}")
     public List<EnderecoEntity> findByPessoaId(
             @PathVariable ("pessoa_id")Integer pessoaId) throws ValidationException {
         return enderecoService.findByPessoaId(pessoaId);
     }
 
     @Operation(summary = "Buscar todos os endereços")
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping
     public List<EnderecoEntity> findAll() throws ValidationException {
         return enderecoService.findAll();
     }
@@ -39,14 +39,14 @@ public class EnderecoController {
     }
 
     @Operation(summary = "Atualizar endereço")
-    @PutMapping
+    @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody EnderecoEntity updateEndereco(
             @RequestBody EnderecoDTO enderecoDTO) throws ValidationException {
         return enderecoService.update(enderecoDTO);
     }
 
     @Operation(summary = "Deletar endereço por ID")
-    @DeleteMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @DeleteMapping(path = "/{id}")
     public boolean deleteById(@PathVariable Integer id) throws ValidationException {
         return enderecoService.deleteById(id);
     }

@@ -20,14 +20,15 @@ public class PessoaJuridicaController {
     private PessoaJuridicaService pessoaJuridicaService;
 
     @Operation(summary = "Buscar pessoa jurídica por CNPJ")
-    @GetMapping(path = "/{cnpj}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/{cnpj}")
     public @ResponseBody PessoaJuridicaEntity findByCnpj(
-            @PathVariable(name = "cnpj") @Parameter(description = "cnpj") String cnpj) throws ValidationException {
+            @PathVariable(name = "cnpj")
+            @Parameter(description = "cnpj") String cnpj) throws ValidationException {
         return pessoaJuridicaService.findByCnpj(cnpj);
     }
 
     @Operation(summary = "Buscar todas as pessoas jurídicas")
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping
     public @ResponseBody List<PessoaJuridicaEntity> findAll() throws ValidationException {
         return pessoaJuridicaService.findAll();
     }
@@ -40,15 +41,16 @@ public class PessoaJuridicaController {
     }
 
     @Operation(summary = "Atualizar pessoa jurídica")
-    @PutMapping
+    @PutMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody PessoaJuridicaEntity updatePessoaJuridica(
             @RequestBody PessoaJuridicaDTO pessoaJuridicaDTO) throws ValidationException {;
         return pessoaJuridicaService.update(pessoaJuridicaDTO);
     }
 
     @Operation(summary = "Deletar pessoa jurídica por CNPJ")
-    @DeleteMapping(path = "/{cnpj}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public boolean delete(@PathVariable(name = "cnpj") @Parameter(description = "cnpj") String cnpj) throws ValidationException {
+    @DeleteMapping(path = "/{cnpj}")
+    public boolean delete(@PathVariable(name = "cnpj")
+                              @Parameter(description = "cnpj") String cnpj) throws ValidationException {
         return pessoaJuridicaService.deleteByCnpj(cnpj);
     }
 }

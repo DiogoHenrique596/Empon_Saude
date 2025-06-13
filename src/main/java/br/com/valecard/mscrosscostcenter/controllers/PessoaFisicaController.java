@@ -20,32 +20,36 @@ public class PessoaFisicaController {
     private PessoaFisicaService pessoaFisicaService;
 
     @Operation(summary = "Buscar pessoa fisica por CPF")
-    @GetMapping(path = "/{cpf}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/{cpf}")
    public PessoaFisicaEntity findByCpf(
             @PathVariable(name = "cpf") @Parameter(description = "cpf") String cpf) throws ValidationException {
         return pessoaFisicaService.findByCpf(cpf);
     }
 
     @Operation(summary = "Buscar todas as pessoas fisicas")
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping
     public @ResponseBody List<PessoaFisicaEntity> findAll() throws ValidationException {
         return pessoaFisicaService.findAll();
     }
+
     @Operation(summary = "Criar pessoa fisica")
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE )
     public @ResponseBody PessoaFisicaEntity createPessoaFisica(
             @RequestBody PessoaFisicaDTO pessoaFisicaDto) throws ValidationException {
         return pessoaFisicaService.save(pessoaFisicaDto);
     }
+
     @Operation(summary = "Atualizar pessoa fisica")
-    @PutMapping
+    @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE )
     public @ResponseBody PessoaFisicaEntity updatePessoaFisica(
             @RequestBody PessoaFisicaDTO pessoaFisicaDto) throws ValidationException {
         return pessoaFisicaService.update(pessoaFisicaDto);
     }
+
     @Operation(summary = "Deletar pessoa fisica por CPF")
-    @DeleteMapping(path = "/{cpf}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public boolean delete(@PathVariable(name = "cpf") @Parameter(description = "cpf") String cpf) throws ValidationException {
+    @DeleteMapping(path = "/{cpf}")
+    public boolean delete(@PathVariable(name = "cpf")
+                              @Parameter(description = "cpf") String cpf) throws ValidationException {
         return pessoaFisicaService.deleteByCpf(cpf);
     }
 }

@@ -22,7 +22,7 @@ public class UsuarioPermissaoController {
     private UsuarioPermissaoService usuarioPermissaoService;
 
     @Operation(summary = "Buscar permissão de usuário por ID")
-    @GetMapping(path = "/{usuarioId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/{usuarioId}")
     public @ResponseBody UsuarioPermissaoEntity getPermissao(
             @PathVariable(name = "usuarioId") @Parameter(description = "ID do usuário") Integer usuarioId,
             @PathVariable(name = "permissaoId") @Parameter(description = "ID da permissão") Integer permissaoId) {
@@ -31,7 +31,7 @@ public class UsuarioPermissaoController {
     }
 
     @Operation(summary = "Buscar todas as permissões de usuário")
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping
     public @ResponseBody List<UsuarioPermissaoEntity> findAll() throws ValidationException {
         return usuarioPermissaoService.findAll();
     }
@@ -44,7 +44,7 @@ public class UsuarioPermissaoController {
     }
 
     @Operation(summary = "Deletar permissão de usuário por ID")
-    @DeleteMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @DeleteMapping
     public boolean deletePermissao(
             @RequestParam(name = "usuarioId")@Parameter(description = "usuarioId") Integer usuarioId,
             @RequestParam(name = "permissaoId")@Parameter(description = "permissaoId") Integer permissaoId) throws ValidationException {

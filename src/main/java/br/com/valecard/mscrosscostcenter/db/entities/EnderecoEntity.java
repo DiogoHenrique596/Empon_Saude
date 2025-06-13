@@ -46,4 +46,20 @@ public class EnderecoEntity implements Serializable {
 
     @Column(name = "pais", length = 50)
     private String pais = "Brasil";
+
+    @Override
+    public String toString() {
+        return "EnderecoEntity{" +
+                "id=" + id +
+                ", pessoa=" + pessoa +
+                ", logradouro='" + logradouro + '\'' +
+                ", numero='" + numero + '\'' +
+                ", complemento='" + complemento + '\'' +
+                ", bairro='" + bairro + '\'' +
+                ", cidade='" + cidade + '\'' +
+                ", estado='" + estado + '\'' +
+                ", cep='" + cep + '\'' +
+                ", pais='" + pais + '\'' +
+                '}';
+    }
 }
